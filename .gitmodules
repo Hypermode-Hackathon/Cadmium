@@ -1,0 +1,6 @@
+[submodule "Cadmium-AI-Service"]
+	path = Cadmium-AI-Service
+	url = git@github.com:Hypermode-Hackathon/Cadmium-AI-Service.git
+[submodule "Cadmium-LogiSense"]
+	path = Cadmium-LogiSense
+	url = git@github.com:Hypermode-Hackathon/Cadmium-LogiSense.git
