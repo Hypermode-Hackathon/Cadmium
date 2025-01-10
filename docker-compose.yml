@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  ai-service:
+    build:
+      context: ./Cadmium-AI-Service
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    container_name: cadmium-ai-service
+    env_file:
+      - ./Cadmium-AI-Service/.env 
+    volumes:
+      - target-codebases:/app/target-codebases  
+    environment:
+      - TARGET_CODEBASES_DIR=/app/target-codebases
+    ports:
+      - "6970:6970"
+
+  electron-backend:
+    build:
+      context: ./Cadmium-LogiSense
+      dockerfile: Dockerfile.backend
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    container_name: cadmium-electron-backend
+    environment:
+      - NODE_ENV=development
+      - TARGET_CODEBASES_DIR=/app/target-codebases
+    volumes:
+      - target-codebases:/app/target-codebases
+      - electron-backend-modules:/app/node_modules
+      - ./Cadmium-LogiSense:/app:cached
+    ports:
+      - "6969:6969"
+
+  electron-frontend:
+    build:
+      context: ./Cadmium-LogiSense
+      dockerfile: Dockerfile.frontend
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    container_name: cadmium-electron-frontend
+    environment:
+      - NODE_ENV=development
+      - BACKEND_URL=http://electron-backend:6969
+      - DISPLAY=:0
+      - ELECTRON_DISABLE_SANDBOX=1
+    volumes:
+      - target-codebases:/app/target-codebases
+      - electron-frontend-modules:/app/node_modules
+      - ./Cadmium-LogiSense:/app:cached
+    ports:
+      - "6968:6968"
+    depends_on:
+      - electron-backend
+
+volumes:
+  target-codebases:
+  electron-backend-modules:
+  electron-frontend-modules:
